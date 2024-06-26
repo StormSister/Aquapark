@@ -26,4 +26,10 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PostMapping("/api/logout")
+    public ResponseEntity<?> logout() {
+        System.out.println("User logged out successfully.");
+        return ResponseEntity.ok("Logged out successfully.");
+    }
 }

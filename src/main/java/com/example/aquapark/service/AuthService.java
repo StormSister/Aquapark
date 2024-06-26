@@ -20,6 +20,10 @@ public class AuthService {
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return user;
         }
-        return null; // Użytkownik nie znaleziony lub błędne hasło
+        return null;
+    }
+
+    public void logout() {
+        // Implement your logout logic if needed
     }
 }

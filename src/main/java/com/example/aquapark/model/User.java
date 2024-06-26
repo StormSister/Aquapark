@@ -1,5 +1,6 @@
 package com.example.aquapark.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -20,6 +21,7 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
 
     @Column(nullable = false)
     private String password;
