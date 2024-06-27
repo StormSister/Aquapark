@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -19,77 +20,79 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
+        System.out.println("Received request to register user: " + user.getUsername());
+
         if (userService.existsByUsername(user.getUsername())) {
-            System.out.println("Registration failed: Username is already taken");
+            System.out.println("Username " + user.getUsername() + " is already taken");
             return ResponseEntity.badRequest().body("Username is already taken!");
         }
+
         if (userService.existsByEmail(user.getEmail())) {
-            System.out.println("Registration failed: Email is already taken");
+            System.out.println("Email " + user.getEmail() + " is already taken");
             return ResponseEntity.badRequest().body("Email is already taken!");
         }
+
         User savedUser = userService.saveUser(user);
-        System.out.println("Registration successful for user: " + savedUser.getUsername());
+        System.out.println("User " + savedUser.getUsername() + " registered successfully");
         return ResponseEntity.ok(savedUser);
     }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        List<User> users = userService.findAllUsers();
-        System.out.println("Retrieved all users successfully");
-        return users;
-    }
-
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsersResponseEntity() {
-        try {
-            List<User> users = userService.findAllUsers();
-            System.out.println("Retrieved all users successfully");
-            return ResponseEntity.ok(users);
-        } catch (Exception e) {
-            System.err.println("Error retrieving all users: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<List<User>> getAllUsers() {
+        System.out.println("Received request to fetch all users");
+
+        List<User> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/search")
-    public List<User> searchUsers(
+    public ResponseEntity<List<User>> searchUsers(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String role) {
+        System.out.println("Received request to search users with parameters: "
+                + "username=" + username + ", firstName=" + firstName
+                + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber
+                + ", role=" + role);
+
         List<User> users = userService.searchUsers(username, firstName, lastName, phoneNumber, role);
-        System.out.println("Search users successful with parameters: username=" + username +
-                ", firstName=" + firstName + ", lastName=" + lastName +
-                ", phoneNumber=" + phoneNumber + ", role=" + role);
-        return users;
+        return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody User userToUpdate) {
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
+        System.out.println("Received request to update user with ID: " + userId);
+
         try {
-
-            if (userToUpdate.getPassword() != null) {
-                throw new IllegalArgumentException("User is not allowed to change the password.");
-            }
-
-
-            User updatedUser = userService.updateUser(userToUpdate);
-            return ResponseEntity.ok(updatedUser);
+            User updatedUserFromService = userService.updateUser(userId, updatedUser);
+            System.out.println("User with ID " + userId + " updated successfully");
+            return ResponseEntity.ok(updatedUserFromService);
         } catch (IllegalArgumentException e) {
-
             System.err.println("Error updating user: " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-
             System.err.println("Error updating user: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
         }
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        System.out.println("Received request to delete user with ID: " + id);
+
         userService.deleteUser(id);
-        System.out.println("User deleted successfully with id: " + id);
+        System.out.println("User with ID " + id + " deleted successfully");
+        return ResponseEntity.noContent().build();
+    }
+
+    public boolean isPasswordChangeAllowed(User updatedUser, Optional<User> existingUserOptional) {
+        // Pobieramy użytkownika z Optional lub rzuca wyjątek, jeśli Optional jest pusty
+        User existingUser = existingUserOptional.orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Sprawdzamy, czy użytkownik ma odpowiednie role i jest zalogowany na swoim koncie
+        return (updatedUser.getRole().equals("client") || updatedUser.getRole().equals("worker"))
+                && updatedUser.getId().equals(existingUser.getId());
     }
 }

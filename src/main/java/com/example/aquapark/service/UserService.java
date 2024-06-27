@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -38,15 +39,40 @@ public class UserService {
         return userRepository.searchUsers(username, firstName, lastName, phoneNumber, role);
     }
 
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public User updateUser(Long userId, User updatedUser) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User existingUser = optionalUser.get();
+
+            // Sprawdzamy, czy użytkownik ma odpowiednie uprawnienia
+            if (isPasswordChangeAllowed(existingUser, updatedUser)) {
+                updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+            } else {
+                updatedUser.setPassword(existingUser.getPassword()); // Zachowaj istniejące hasło
+            }
+
+            // Aktualizujemy pozostałe pola użytkownika
+            existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setFirstName(updatedUser.getFirstName());
+            existingUser.setLastName(updatedUser.getLastName());
+            existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
+            existingUser.setRole(updatedUser.getRole());
+
+            return userRepository.save(existingUser);
+        } else {
+            throw new IllegalArgumentException("User not found with id: " + userId);
+        }
+    }
+    public boolean isPasswordChangeAllowed(User updatedUser, User existingUser) {
+        // Sprawdzamy, czy użytkownik ma odpowiednie role i jest zalogowany na swoim koncie
+        return (updatedUser.getRole().equals("client") || updatedUser.getRole().equals("worker"))
+                && updatedUser.getId().equals(existingUser.getId());
     }
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);}}
 
-
-
-}

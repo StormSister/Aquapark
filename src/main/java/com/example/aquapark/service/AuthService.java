@@ -1,6 +1,6 @@
 package com.example.aquapark.service;
 
-import com.example.aquapark.model.User;
+import com.example.aquapark.model.User;  // Import klasy User
 import com.example.aquapark.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +23,11 @@ public class AuthService {
         return null;
     }
 
-    public void logout() {
-        // Implement your logout logic if needed
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }
