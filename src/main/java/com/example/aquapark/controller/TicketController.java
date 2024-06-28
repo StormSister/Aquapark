@@ -42,20 +42,14 @@ public class TicketController {
 
 
 
-    @GetMapping("/user/tickets")
-    public List<String> getUserTicketPaths(@RequestParam("email") String userEmail) {
+    @GetMapping("/tickets")
+    public ResponseEntity<List<String>> getUserTicketPaths(@RequestParam("email") String userEmail) {
         System.out.println("Fetching ticket paths for user: " + userEmail);
 
         List<String> pdfPaths = ticketService.getUserTicketPath(userEmail);
 
         System.out.println("Found ticket paths: " + pdfPaths);
 
-        // Assuming ticket paths are relative to some base URL
-        List<String> pdfUrls = pdfPaths.stream()
-                .map(path -> "http://localhost:8080/api/tickets/" + path)
-                .collect(Collectors.toList());
-        System.out.println("Found ticket paths: " + pdfUrls);
-
-        return pdfUrls;
+        return ResponseEntity.ok(pdfPaths);
     }
 }

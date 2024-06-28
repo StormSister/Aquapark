@@ -143,10 +143,10 @@ public class TicketService {
     }
 
     public List<String> getUserTicketPath(String email) {
-        List<Ticket> tickets = ticketRepository.findByEmail(email); // Pobierz listę obiektów Ticket dla danego email
+        List<Ticket> tickets = ticketRepository.findByEmail(email);
 
         List<String> pdfPaths = tickets.stream()
-                .map(Ticket::getPdfPath) // Mapowanie Ticket na jego ścieżkę do PDF
+                .map(Ticket::getPdfPath)
                 .collect(Collectors.toList());
 
         return pdfPaths;

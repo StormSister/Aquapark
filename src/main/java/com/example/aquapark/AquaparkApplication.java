@@ -33,7 +33,7 @@ public class AquaparkApplication {
                 registry.addMapping("/api/**")  // Apply to all endpoints under "/api"
                         .allowedOrigins("http://localhost:3000")  // Allow requests from this origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Allowed HTTP methods including OPTIONS
-//                        .allowedHeaders("*")  // Allowed headers
+                        .allowedHeaders("*")  // Allowed headers
                         .allowCredentials(true);  // Allow including cookies
             }
         };
