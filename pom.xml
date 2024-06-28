@@ -80,6 +80,34 @@
 			<artifactId>google-api-client-gson</artifactId>
 			<version>1.33.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
+
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-core</artifactId>
+			<version>7.2.4</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.4.0</version> <!-- lub najnowsza dostępna wersja -->
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.4.0</version> <!-- lub najnowsza dostępna wersja -->
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-layout</artifactId>
+			<version>7.2.4</version> <!-- Zastąp x.x odpowiednią wersją -->
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-jackson2</artifactId>
