@@ -47,4 +47,7 @@ public class Ticket {
 
     @Column(nullable = false)
     private String status;
+
+
+
 }
