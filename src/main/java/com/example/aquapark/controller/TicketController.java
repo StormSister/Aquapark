@@ -27,7 +27,6 @@ public class TicketController {
         int children = (int) requestData.get("children");
         boolean isGroup = (boolean) requestData.get("isGroup");
 
-        // Logging received data
         System.out.println("Received purchase request in controller:");
         System.out.println("Email: " + email);
         System.out.println("Adults: " + adults);
@@ -37,6 +36,16 @@ public class TicketController {
         ticketService.purchaseTickets(email, adults, children, isGroup);
 
         return "Tickets purchased successfully. They have been sent to your email.";
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id) {
+        Ticket ticket = ticketService.findById(id);
+        if (ticket != null) {
+            return ResponseEntity.ok(ticket);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
@@ -51,5 +60,21 @@ public class TicketController {
         System.out.println("Found ticket paths: " + pdfPaths);
 
         return ResponseEntity.ok(pdfPaths);
+    }
+
+    @PostMapping("/check-qr")
+    public ResponseEntity<String> checkTicket(@RequestBody Map<String, String> requestData) {
+        String qrCodeText = requestData.get("qrCode");
+        System.out.println("qrCodeText: " + qrCodeText);
+
+        if (qrCodeText == null || qrCodeText.isEmpty()) {
+
+            return ResponseEntity.badRequest().body("Invalid QR code.");
+        }
+
+        String status = ticketService.checkTicketStatus(qrCodeText);
+        System.out.println("status :" +status);
+
+        return ResponseEntity.ok(status);
     }
 }

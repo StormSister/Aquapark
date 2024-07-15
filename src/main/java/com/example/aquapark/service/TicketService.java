@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,10 @@ public class TicketService {
     private PdfService pdfService;
 
     @Transactional
+    public Ticket findById(Long id) {
+        return ticketRepository.findById(id).orElse(null);
+    }
+
     public void purchaseTickets(String email, int adults, int children, boolean isGroup) {
         LocalDateTime purchaseDate = LocalDateTime.now();
         LocalDateTime expirationDate = purchaseDate.plusDays(31);
@@ -62,8 +69,8 @@ public class TicketService {
     }
 
     private void createIndividualTickets(String email, int adults, int children, LocalDateTime purchaseDate, LocalDateTime expirationDate) {
-        double adultPrice = ((Price) priceRepository.findByTypeAndCategory("Ticket", "Standard")).getValue();
-        double childPrice = ((Price) priceRepository.findByTypeAndCategory("Ticket", "Child")).getValue();
+        double adultPrice = priceRepository.findByTypeAndCategory("Ticket", "Standard").getValue();
+        double childPrice = priceRepository.findByTypeAndCategory("Ticket", "Child").getValue();
 
         for (int i = 0; i < adults; i++) {
             Ticket ticket = new Ticket();
@@ -116,7 +123,7 @@ public class TicketService {
 
             System.out.println("PDF generated successfully. Path: " + pdfPath);
         } catch (IOException e) {
-            // Handle IOException
+
             e.printStackTrace();
         }
     }
@@ -151,4 +158,76 @@ public class TicketService {
 
         return pdfPaths;
     }
-}
+
+
+    public String checkTicketStatus(String qrCodeText) {
+
+        Ticket ticket = parseTicketFromQR(qrCodeText);
+
+        if (ticket == null) {
+            return "Invalid ticket format.";
+        }
+
+        Optional<Ticket> storedTicketOptional = ticketRepository.findById(ticket.getId());
+        if (!storedTicketOptional.isPresent()) {
+            return "Ticket not found.";
+        }
+
+        Ticket storedTicket = storedTicketOptional.get();
+
+        if (isTicketExpired(storedTicket.getExpirationDate())) {
+            return "Ticket expired.";
+        }
+
+        if ("used".equalsIgnoreCase(storedTicket.getStatus())) {
+            return "Ticket already used.";
+        } else if ("active".equalsIgnoreCase(storedTicket.getStatus())) {
+            storedTicket.setStatus("used");
+            ticketRepository.save(storedTicket);
+            return "Ticket checked.";
+        }
+
+        return "Invalid ticket status.";
+    }
+
+    private boolean isTicketExpired(LocalDateTime expirationDate) {
+        return expirationDate.isBefore(LocalDateTime.now());
+    }
+
+    private Ticket parseTicketFromQR(String qrCodeText) {
+        String[] lines = qrCodeText.split("\n");
+        Ticket ticket = new Ticket();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            for (String line : lines) {
+                if (line.startsWith("Ticket ID: ")) {
+                    ticket.setId(Long.parseLong(line.substring(11).trim()));
+                } else if (line.startsWith("Email: ")) {
+                    ticket.setEmail(line.substring(7).trim());
+                } else if (line.startsWith("Type: ")) {
+                    ticket.setType(line.substring(6).trim());
+                } else if (line.startsWith("Price: ")) {
+                    ticket.setPrice(Double.parseDouble(line.substring(7).trim()));
+                } else if (line.startsWith("Purchase Date: ")) {
+                    String purchaseDateStr = line.substring(15).trim();
+                    ticket.setPurchaseDate(LocalDateTime.parse(purchaseDateStr, formatter));
+                } else if (line.startsWith("Expiration Date: ")) {
+                    String expirationDateStr = line.substring(17).trim();
+                    ticket.setExpirationDate(LocalDateTime.parse(expirationDateStr, formatter));
+                } else if (line.startsWith("Adults: ")) {
+                    ticket.setAdults(Integer.parseInt(line.substring(8).trim()));
+                } else if (line.startsWith("Children: ")) {
+                    ticket.setChildren(Integer.parseInt(line.substring(10).trim()));
+                }
+            }
+        } catch (NumberFormatException | DateTimeParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return ticket;
+    }
+
+    }

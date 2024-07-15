@@ -31,7 +31,7 @@ public class AquaparkApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")  // Apply to all endpoints under "/api"
-                        .allowedOrigins("http://localhost:3000")  // Allow requests from this origin
+                        .allowedOrigins("http://192.168.3.9:3000")  // Allow requests from this origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Allowed HTTP methods including OPTIONS
                         .allowedHeaders("*")  // Allowed headers
                         .allowCredentials(true);  // Allow including cookies

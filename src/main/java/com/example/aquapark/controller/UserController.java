@@ -88,10 +88,8 @@ public class UserController {
     }
 
     public boolean isPasswordChangeAllowed(User updatedUser, Optional<User> existingUserOptional) {
-        // Pobieramy użytkownika z Optional lub rzuca wyjątek, jeśli Optional jest pusty
         User existingUser = existingUserOptional.orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Sprawdzamy, czy użytkownik ma odpowiednie role i jest zalogowany na swoim koncie
         return (updatedUser.getRole().equals("client") || updatedUser.getRole().equals("worker"))
                 && updatedUser.getId().equals(existingUser.getId());
     }

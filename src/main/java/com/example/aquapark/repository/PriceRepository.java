@@ -4,12 +4,13 @@ import com.example.aquapark.model.Price;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Long> {
+    List<Price> findByType(String type);
 
-    // Method to find a Price by type and category
     Price findByTypeAndCategory(String type, String category);
 
-    // You can define more methods if needed based on your requirements
 
 }

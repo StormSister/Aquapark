@@ -86,9 +86,7 @@
 			<version>1.33.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
 
-		<!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itext7-core</artifactId>
@@ -105,11 +103,11 @@
 			<artifactId>javase</artifactId>
 			<version>3.4.0</version> <!-- lub najnowsza dostępna wersja -->
 		</dependency>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itext7-layout</artifactId>
-			<version>7.2.4</version> <!-- Zastąp x.x odpowiednią wersją -->
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.itextpdf</groupId>-->
+<!--			<artifactId>itext7-layout</artifactId>-->
+<!--			<version>7.2.4</version> &lt;!&ndash; Zastąp x.x odpowiednią wersją &ndash;&gt;-->
+<!--		</dependency>-->
 
 
 
@@ -117,6 +115,10 @@
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-jackson2</artifactId>
 			<version>1.33.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 
@@ -127,6 +129,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+
 				<configuration>
 					<excludes>
 						<exclude>

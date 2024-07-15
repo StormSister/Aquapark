@@ -23,6 +23,14 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User saveUserNoLogin(User user) {
+        return userRepository.save(user);
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username) != null;
     }
@@ -44,14 +52,12 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
 
-            // Sprawdzamy, czy użytkownik ma odpowiednie uprawnienia
             if (isPasswordChangeAllowed(existingUser, updatedUser)) {
                 updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
             } else {
-                updatedUser.setPassword(existingUser.getPassword()); // Zachowaj istniejące hasło
+                updatedUser.setPassword(existingUser.getPassword());
             }
 
-            // Aktualizujemy pozostałe pola użytkownika
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
@@ -64,7 +70,6 @@ public class UserService {
         }
     }
     public boolean isPasswordChangeAllowed(User updatedUser, User existingUser) {
-        // Sprawdzamy, czy użytkownik ma odpowiednie role i jest zalogowany na swoim koncie
         return (updatedUser.getRole().equals("client") || updatedUser.getRole().equals("worker"))
                 && updatedUser.getId().equals(existingUser.getId());
     }
