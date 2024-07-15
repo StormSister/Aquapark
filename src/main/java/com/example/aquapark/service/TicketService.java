@@ -31,8 +31,6 @@ public class TicketService {
     private PdfService pdfService;
 
     @Transactional
-
-
     public Ticket findById(Long id) {
         return ticketRepository.findById(id).orElse(null);
     }
@@ -71,8 +69,8 @@ public class TicketService {
     }
 
     private void createIndividualTickets(String email, int adults, int children, LocalDateTime purchaseDate, LocalDateTime expirationDate) {
-        double adultPrice = ((Price) priceRepository.findByTypeAndCategory("Ticket", "Standard")).getValue();
-        double childPrice = ((Price) priceRepository.findByTypeAndCategory("Ticket", "Child")).getValue();
+        double adultPrice = priceRepository.findByTypeAndCategory("Ticket", "Standard").getValue();
+        double childPrice = priceRepository.findByTypeAndCategory("Ticket", "Child").getValue();
 
         for (int i = 0; i < adults; i++) {
             Ticket ticket = new Ticket();
@@ -125,7 +123,7 @@ public class TicketService {
 
             System.out.println("PDF generated successfully. Path: " + pdfPath);
         } catch (IOException e) {
-            // Handle IOException
+
             e.printStackTrace();
         }
     }
@@ -163,14 +161,13 @@ public class TicketService {
 
 
     public String checkTicketStatus(String qrCodeText) {
-        // Extract information from QR code text
+
         Ticket ticket = parseTicketFromQR(qrCodeText);
 
         if (ticket == null) {
             return "Invalid ticket format.";
         }
 
-        // Check if the ticket ID exists in the database
         Optional<Ticket> storedTicketOptional = ticketRepository.findById(ticket.getId());
         if (!storedTicketOptional.isPresent()) {
             return "Ticket not found.";
@@ -178,12 +175,10 @@ public class TicketService {
 
         Ticket storedTicket = storedTicketOptional.get();
 
-        // Check ticket expiration
         if (isTicketExpired(storedTicket.getExpirationDate())) {
             return "Ticket expired.";
         }
 
-        // Check ticket status
         if ("used".equalsIgnoreCase(storedTicket.getStatus())) {
             return "Ticket already used.";
         } else if ("active".equalsIgnoreCase(storedTicket.getStatus())) {
@@ -229,7 +224,7 @@ public class TicketService {
             }
         } catch (NumberFormatException | DateTimeParseException e) {
             e.printStackTrace();
-            return null; // Return null in case of parsing error
+            return null;
         }
 
         return ticket;

@@ -27,7 +27,6 @@ public class TicketController {
         int children = (int) requestData.get("children");
         boolean isGroup = (boolean) requestData.get("isGroup");
 
-        // Logging received data
         System.out.println("Received purchase request in controller:");
         System.out.println("Email: " + email);
         System.out.println("Adults: " + adults);

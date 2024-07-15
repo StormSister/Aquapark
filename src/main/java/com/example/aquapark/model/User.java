@@ -1,8 +1,6 @@
 package com.example.aquapark.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import lombok.*;
 
 @Entity
@@ -16,14 +14,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private String email;
 
-
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column(name = "first_name", nullable = false)
@@ -37,6 +34,4 @@ public class User {
 
     @Column(nullable = false)
     private String role = "client";
-
-
 }

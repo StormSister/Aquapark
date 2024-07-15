@@ -38,12 +38,11 @@ public class GoogleAuthService {
             GoogleIdToken.Payload payload = idToken.getPayload();
             String email = payload.getEmail();
 
-            // Check if user exists in your database, if not create a new user
             User user = authService.findByEmail(email);
             if (user == null) {
                 user = new User();
                 user.setEmail(email);
-                user.setUsername(email); // or extract another info from payload
+                user.setUsername(email);
                 authService.save(user);
             }
 
