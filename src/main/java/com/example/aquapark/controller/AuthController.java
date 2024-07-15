@@ -3,7 +3,7 @@ package com.example.aquapark.controller;
 
 import com.example.aquapark.model.User;  // Import klasy User
 import com.example.aquapark.service.AuthService;
-import com.example.aquapark.service.GoogleAuthService;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +19,8 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private GoogleAuthService googleAuthService;
+//    @Autowired
+//    private GoogleAuthService googleAuthService;
 
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody User loginUser) {
@@ -38,14 +38,14 @@ public class AuthController {
         return ResponseEntity.ok("Logged out successfully.");
     }
 
-    @PostMapping("/api/google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
-        String idTokenString = body.get("token");
-        try {
-            GoogleIdToken.Payload payload = googleAuthService.verifyAndSaveUser(idTokenString);
-            return ResponseEntity.ok(payload);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
-        }
-    }
+//    @PostMapping("/api/google-login")
+//    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
+//        String idTokenString = body.get("token");
+//        try {
+//            GoogleIdToken.Payload payload = googleAuthService.verifyAndSaveUser(idTokenString);
+//            return ResponseEntity.ok(payload);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");
+//        }
+//    }
 }
