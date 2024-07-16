@@ -33,4 +33,15 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the reservation.");
         }
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<Reservation>> getUserReservationsByEmail(@RequestParam String email) {
+        try {
+            List<Reservation> reservations = reservationService.getUserReservationsByEmail(email);
+            return ResponseEntity.ok(reservations);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

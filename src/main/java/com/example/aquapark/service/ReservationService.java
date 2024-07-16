@@ -28,6 +28,10 @@ public class ReservationService {
         this.userRepository = userRepository;
     }
 
+    public List<Reservation> getUserReservationsByEmail(String email) {
+        return reservationRepository.findByUserEmail(email);
+    }
+
     public void makeReservation(List<ReservationRequest> reservationRequests) throws ReservationException {
         for (ReservationRequest request : reservationRequests) {
             System.out.println("Processing reservation request: " + request);
