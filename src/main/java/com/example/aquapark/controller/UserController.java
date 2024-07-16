@@ -45,6 +45,19 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/users/search")
+    public ResponseEntity<?> getUserByEmail(@RequestParam(required = false) String email) {
+        System.out.println("Received request to fetch user by email: " + email);
+
+        User user = userService.findUserByEmail(email);
+
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchUsers(
             @RequestParam(required = false) String email, // Dodajemy parametr email
