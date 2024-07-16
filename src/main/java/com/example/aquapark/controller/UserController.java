@@ -47,17 +47,19 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchUsers(
+            @RequestParam(required = false) String email, // Dodajemy parametr email
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String role) {
+
         System.out.println("Received request to search users with parameters: "
-                + "username=" + username + ", firstName=" + firstName
+                + "email=" + email + ", username=" + username + ", firstName=" + firstName
                 + ", lastName=" + lastName + ", phoneNumber=" + phoneNumber
                 + ", role=" + role);
 
-        List<User> users = userService.searchUsers(username, firstName, lastName, phoneNumber, role);
+        List<User> users = userService.searchUsers(email, username, firstName, lastName, phoneNumber, role);
         return ResponseEntity.ok(users);
     }
 

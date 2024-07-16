@@ -43,8 +43,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> searchUsers(String username, String firstName, String lastName, String phoneNumber, String role) {
-        return userRepository.searchUsers(username, firstName, lastName, phoneNumber, role);
+    public List<User> searchUsers(String email, String username, String firstName, String lastName, String phoneNumber, String role) {
+        return userRepository.searchUsers(email, username, firstName, lastName, phoneNumber, role);
     }
 
     public User updateUser(Long userId, User updatedUser) {
@@ -52,17 +52,30 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
 
-            if (isPasswordChangeAllowed(existingUser, updatedUser)) {
+            if (isPasswordChangeAllowed(existingUser, updatedUser) && updatedUser.getPassword() != null) {
                 updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
             } else {
                 updatedUser.setPassword(existingUser.getPassword());
             }
 
-            existingUser.setUsername(updatedUser.getUsername());
-            existingUser.setFirstName(updatedUser.getFirstName());
-            existingUser.setLastName(updatedUser.getLastName());
-            existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
-            existingUser.setRole(updatedUser.getRole());
+            if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+                existingUser.setEmail(updatedUser.getEmail());
+            }
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
+                existingUser.setUsername(updatedUser.getUsername());
+            }
+            if (updatedUser.getFirstName() != null && !updatedUser.getFirstName().isEmpty()) {
+                existingUser.setFirstName(updatedUser.getFirstName());
+            }
+            if (updatedUser.getLastName() != null && !updatedUser.getLastName().isEmpty()) {
+                existingUser.setLastName(updatedUser.getLastName());
+            }
+            if (updatedUser.getPhoneNumber() != null && !updatedUser.getPhoneNumber().isEmpty()) {
+                existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
+            }
+            if (updatedUser.getRole() != null && !updatedUser.getRole().isEmpty()) {
+                existingUser.setRole(updatedUser.getRole());
+            }
 
             return userRepository.save(existingUser);
         } else {
