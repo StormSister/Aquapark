@@ -10,6 +10,8 @@ import com.example.aquapark.repository.RoomRepository;
 import com.example.aquapark.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -64,5 +66,36 @@ public class ReservationService {
                 reservationRepository.save(reservation);
             }
         }
+    }
+    public void cancelReservation(Long id) {
+        reservationRepository.deleteById(id);
+    }
+
+    public void updateReservation(Long id, ReservationRequest reservationRequest) throws ReservationException {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new ReservationException("Reservation not found"));
+        List<Room> availableRooms = roomRepository.findAvailableRoomsByType(reservationRequest.getStartDate(), reservationRequest.getEndDate(), reservationRequest.getRoomType());
+
+        if (availableRooms.isEmpty()) {
+            throw new ReservationException("No available rooms of type " + reservationRequest.getRoomType() + " in the selected dates.");
+        }
+
+        Room room = availableRooms.get(0);
+        reservation.setRoom(room);
+        reservation.setStartDate(reservationRequest.getStartDate());
+        reservation.setEndDate(reservationRequest.getEndDate());
+        reservationRepository.save(reservation);
+    }
+
+    public List<Reservation> searchReservations(String startDate, String endDate) {
+        if (startDate != null && endDate != null) {
+
+            return reservationRepository.findByDateRange(LocalDate.parse(startDate), LocalDate.parse(endDate));
+        } else {
+            return reservationRepository.findAll();
+        }
+    }
+
+    public List<Reservation> findAll() {
+        return reservationRepository.findAll();
     }
 }
