@@ -101,9 +101,11 @@ public class ReservationController {
         dto.setId(reservation.getId());
         dto.setUserEmail(reservation.getUser().getEmail());
         dto.setUserName(reservation.getUser().getFirstName() + " " + reservation.getUser().getLastName());
+        dto.setPhoneNumber(reservation.getUser().getPhoneNumber());
         dto.setRoomType(reservation.getRoom().getType());
         dto.setStartDate(reservation.getStartDate());
         dto.setEndDate(reservation.getEndDate());
+        System.out.println(dto);
         return dto;
     }
 
