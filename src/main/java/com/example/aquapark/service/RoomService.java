@@ -28,7 +28,6 @@ public class RoomService {
     public List<RoomTypeResponse> getAvailableRoomTypes(LocalDate startDate, LocalDate endDate) {
         List<Room> availableRooms = roomRepository.findAvailableRooms(startDate, endDate);
 
-
         Map<String, List<Room>> roomsByType = availableRooms.stream()
                 .collect(Collectors.groupingBy(Room::getType));
 
@@ -36,7 +35,7 @@ public class RoomService {
                 .map(entry -> {
                     String type = entry.getKey();
                     List<Room> rooms = entry.getValue();
-                    int availableCount = roomRepository.countAvailableRoomsByType(type, startDate, endDate );
+                    int availableCount = roomRepository.countAvailableRoomsByType(type, startDate, endDate);
                     RoomTypeResponse response = convertToRoomTypeResponse(rooms.get(0));
                     response.setAvailableCount(availableCount);
                     System.out.println(response);
@@ -51,7 +50,7 @@ public class RoomService {
         response.setCapacity(room.getCapacity());
         response.setBeds(room.getBeds());
         response.setDescription(room.getDescription());
-        response.setPrice(room.getPrice());
+        response.setPrice(room.getPrice().getValue());
         response.setImagePath(room.getImagePath());
         return response;
     }

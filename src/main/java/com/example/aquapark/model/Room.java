@@ -15,5 +15,8 @@ public class Room {
     private int beds;
     private String description;
     private String imagePath;
-    private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "price_id", nullable = false)
+    private Price price;
 }

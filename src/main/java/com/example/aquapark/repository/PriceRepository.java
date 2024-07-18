@@ -13,4 +13,9 @@ public interface PriceRepository extends JpaRepository<Price, Long> {
     Price findByTypeAndCategory(String type, String category);
 
 
+    List<Price> findByCategory(String category);
+
+    List<Price> findByTypeOrCategory(String type, String category);
+
+
 }
